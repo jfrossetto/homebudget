@@ -1,3 +1,4 @@
 rootProject.name = 'homebudget'
 include 'homebudget-api'
+include 'homebudget-domain'
 

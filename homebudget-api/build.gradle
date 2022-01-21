@@ -10,6 +10,7 @@ jar {
 }
 
 dependencies {
+    implementation project(":homebudget-domain")
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
