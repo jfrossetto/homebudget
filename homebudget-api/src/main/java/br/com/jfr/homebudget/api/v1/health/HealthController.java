@@ -1,6 +1,7 @@
 package br.com.jfr.homebudget.api.v1.health;
 
 import br.com.jfr.homebudget.domain.health.HealthService;
+import br.com.jfr.libs.commons.api.security.Secured;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ public class HealthController {
 
   private final HealthService service;
 
+  @Secured(unprotected = true)
   @GetMapping
   public Mono<String> health(ServerWebExchange exchange) {
     return service
