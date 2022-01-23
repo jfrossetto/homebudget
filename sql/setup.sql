@@ -16,4 +16,7 @@ select fn_generate_uuid();
 
 select * from flyway_schema_history fsh 
 
-select * from extract_header_imported ehi 
+select * from imported_extract_header ieh
+select * from imported_extract_lines iel 
+
+
