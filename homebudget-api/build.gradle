@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+bootJar {
+    exclude '**/application.properties'
+}
+
+jar {
+    enabled = false
+}
+
+dependencies {
+    implementation project(":homebudget-domain")
+    implementation "br.com.jfr.libs:commons:${libsVersion}"
+    implementation "br.com.jfr.libs:commons-api:${libsVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
+
