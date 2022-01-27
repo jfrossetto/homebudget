@@ -22,9 +22,9 @@ public class UploadExtractController {
   private final ImportedExtractHeaderService service;
 
   @PostMapping
-  public Mono<ImportedExtractHeader> uploadExtrac(@RequestPart(name="extractHeader") final ImportedExtractHeader extractToImport,
-                                                  @RequestPart(name="extractFile") final Flux<ByteBuffer> extractFile,
-                                                  ServerWebExchange exchange) {
+  public Mono<ImportedExtractHeader> uploadExtract(@RequestPart(name = "extractHeader") final ImportedExtractHeader extractToImport,
+                                                   @RequestPart(name = "extractFile") final Flux<ByteBuffer> extractFile,
+                                                   ServerWebExchange exchange) {
     return service.uploadExtract(extractToImport, extractFile)
         .doOnSuccess(e -> exchange.getResponse().setStatusCode(HttpStatus.CREATED));
   }
