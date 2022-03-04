@@ -1,4 +1,6 @@
 dependencies {
+    implementation 'org.apache.pdfbox:pdfbox:2.0.24'
+    //implementation 'org.apache.pdfbox:pdfbox-tools:2.0.24'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation "br.com.jfr.libs:commons:${libsVersion}"
     implementation "br.com.jfr.libs:commons-r2dbc:${libsVersion}"
