@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homebudget-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homebudget-app
+  template:
+    metadata:
+      labels:
+        app: homebudget-app
+    spec:
+      containers:
+        - name: homebudget-app
+          image: jfrossetto/homebudget-app:0.0.1
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 80
+

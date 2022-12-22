@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /api(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: homebudget-api
+            port:
+              number: 8081
+      - path: /homebudget(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: homebudget-app
+            port:
+              number: 81
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web
+            port:
+              number: 80

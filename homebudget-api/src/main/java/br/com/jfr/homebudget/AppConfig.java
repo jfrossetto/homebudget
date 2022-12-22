@@ -29,7 +29,7 @@ public class AppConfig {
   public void postConstruct() {
     PropertyLoader.load(env);
     final String applicationTitle =
-        Optional.ofNullable(System.getProperty("instanceName")).orElse("BlueMoon WebFlux API");
+        Optional.ofNullable(System.getProperty("instanceName")).orElse("HomebudgetAPI");
     final String applicationVersion = "1.0.0";
     final String applicationUrl = "/api/homebudget";
     System.setProperty("application.title", applicationTitle);
