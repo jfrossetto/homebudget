@@ -18,7 +18,7 @@ CMD java -Dserver.port=8081 \
          -Dlog4j.configurationFile=log4j2.xml \
          -Dfile.encoding=UTF-8 \
          -DinstanceName=HomebudgetApi \
-         -Xms256m \
+         -Xms128m \
          -Xmx256m \
          -XX:+UseG1GC \
     -jar homebudget-api.jar
