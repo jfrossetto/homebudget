@@ -6,7 +6,7 @@ drop table baseaudit ;
 
 select pid, datname, usename, application_name, backend_start, query_start, query 
 from pg_stat_activity
-where application_name = 'sample' 
+--where application_name = 'sample' 
 order by query_start
 
 select now()
