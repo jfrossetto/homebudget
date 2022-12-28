@@ -1,5 +1,6 @@
 package br.com.jfr.homebudget.domain.account;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,4 +27,19 @@ public class AccountService {
         });
   }
 
+  public Mono<Account> findById(UUID id) {
+    return Mono.deferContextual(
+        ctx -> {
+          return repository.findById(id);
+        });
+  }
+
+  public Mono<Account> update(Account accountToUpdate,
+                              Account account) {
+    return Mono.deferContextual(
+        ctx -> {
+          accountToUpdate.setDescription(account.getDescription());
+          return repository.save(accountToUpdate);
+        });
+  }
 }
