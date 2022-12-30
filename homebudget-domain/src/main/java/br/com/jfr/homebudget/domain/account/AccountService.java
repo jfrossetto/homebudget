@@ -1,5 +1,6 @@
 package br.com.jfr.homebudget.domain.account;
 
+import br.com.jfr.libs.commons.exception.BusinessException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -34,12 +36,24 @@ public class AccountService {
         });
   }
 
+  @Transactional
   public Mono<Account> update(Account accountToUpdate,
                               Account account) {
     return Mono.deferContextual(
         ctx -> {
           accountToUpdate.setDescription(account.getDescription());
           return repository.save(accountToUpdate);
+        });
+  }
+
+  @Transactional
+  public Mono<Account> create(Account newAccount) {
+    return Mono.deferContextual(
+        ctx -> {
+          newAccount.setId(null);
+          return repository.save(newAccount)
+              .onErrorResume(ex -> Mono
+                  .error(new BusinessException(String.format("Error saving account %s", ex.getMessage()), ex)));
         });
   }
 }
