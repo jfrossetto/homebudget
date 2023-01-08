@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -42,6 +44,7 @@ public class AccountService {
     return Mono.deferContextual(
         ctx -> {
           accountToUpdate.setDescription(account.getDescription());
+          accountToUpdate.setParentCode(account.getParentCode());
           return repository.save(accountToUpdate);
         });
   }
@@ -56,4 +59,12 @@ public class AccountService {
                   .error(new BusinessException(String.format("Error saving account %s", ex.getMessage()), ex)));
         });
   }
+
+  public Flux<Account> findAutocomplete(String code, String search) {
+    return Flux.deferContextual(
+        ctx -> {
+          return repository.findAutocomplete(code, ObjectUtils.isEmpty(search) ? "" : search);
+        });
+  }
+
 }

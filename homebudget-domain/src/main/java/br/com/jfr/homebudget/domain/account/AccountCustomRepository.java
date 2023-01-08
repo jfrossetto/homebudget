@@ -11,4 +11,7 @@ public interface AccountCustomRepository {
 
   Mono<Long> findAllCount(String search);
 
+  Flux<Account> findAutocomplete(String code,
+                                 String search);
+
 }

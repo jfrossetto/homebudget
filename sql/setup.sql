@@ -25,12 +25,13 @@ order by code
 select account_id as id, 
        code, 
        description, 
-       parent_code as parentCode
+       parent_code as parentCode,
+       create_date, change_date
  from account 
 --where description like '%a%'
  order by code 
 
-delete where code = '1002'
+delete from account where code = '1002'
 
 
 insert into account(code, description, parent_code, parent, level, created_by) values('10', 'Receitas', '', true, 1, '00000000-0000-0000-0000-000000000000');
