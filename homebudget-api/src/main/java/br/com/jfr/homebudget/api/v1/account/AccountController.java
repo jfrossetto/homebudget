@@ -5,13 +5,12 @@ import static br.com.jfr.homebudget.api.v1.ApiUtils.buildNotFoundError;
 import br.com.jfr.homebudget.domain.account.Account;
 import br.com.jfr.homebudget.domain.account.AccountService;
 import br.com.jfr.libs.commons.api.pagination.PageFilter;
-import br.com.jfr.libs.commons.api.security.Secured;
-import java.time.Duration;
 import java.util.UUID;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +73,40 @@ public class AccountController {
     return service.findAutocomplete(code, search)
         .doOnComplete(() -> exchange.getResponse().setStatusCode(HttpStatus.OK));
 
+  }
+
+  @GetMapping("/nextcode")
+  public Mono<String> findNextCode(@RequestParam("parentCode") String parentCode,
+                                   ServerWebExchange exchange) {
+    return service.findNextCode(parentCode)
+        .doOnSuccess(e -> exchange.getResponse().setStatusCode(HttpStatus.OK));
+  }
+
+  @GetMapping("validate-delete/{id}")
+  public Mono<Void> validateDelete(@PathVariable UUID id,
+                              ServerWebExchange exchange) {
+    return service.findById(id)
+        .switchIfEmpty(Mono.error(buildNotFoundError("Account", id)))
+        .flatMap(accountToDelete -> service.validateDelete(accountToDelete))
+        .doOnSuccess(e -> exchange.getResponse().setStatusCode(HttpStatus.OK));
+  }
+
+  @DeleteMapping("/{id}")
+  public Mono<Boolean> delete(@PathVariable UUID id,
+                              ServerWebExchange exchange) {
+    return service.findById(id)
+        .switchIfEmpty(Mono.error(buildNotFoundError("Account", id)))
+        .flatMap(accountToDelete -> service.delete(accountToDelete))
+        .doOnSuccess(e -> exchange.getResponse().setStatusCode(HttpStatus.OK));
+
+  }
+
+  @GetMapping("code-exists/{code}")
+  public Mono<Boolean> codeExists(@PathVariable String code,
+                                  @RequestParam(required = false) UUID id,
+                                  ServerWebExchange exchange) {
+    return service.codeExists(id, code)
+        .doOnSuccess(e -> exchange.getResponse().setStatusCode(HttpStatus.OK));
   }
 
 }

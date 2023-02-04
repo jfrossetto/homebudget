@@ -14,4 +14,5 @@ public interface AccountCustomRepository {
   Flux<Account> findAutocomplete(String code,
                                  String search);
 
+  Mono<Long> findLastCode(String parentCode);
 }

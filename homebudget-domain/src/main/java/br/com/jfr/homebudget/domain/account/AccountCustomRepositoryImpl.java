@@ -137,4 +137,39 @@ public class AccountCustomRepositoryImpl implements AccountCustomRepository {
 
   }
 
+  public Mono<Long> findLastCode(String parentCode) {
+
+    Map<String, Object> params = new HashMap<>();
+
+    String maxCode = ObjectUtils.isEmpty(parentCode)
+      ? "select coalesce(max(code::numeric), 0) as lastCode "
+      : "select coalesce(max(substring(code, length(:parentCode)+1)::numeric), 0) as lastCode ";
+
+    StringBuilder query = new StringBuilder()
+        .append(maxCode)
+        .append("  from account ");
+
+    if (!ObjectUtils.isEmpty(parentCode)) {
+      query.append("where parent_code = :parentCode ");
+      params.put("parentCode", parentCode);
+    } else {
+      query.append("where parent_code is null ");
+    }
+
+    final var baseQueryExecute = r2dbcTemplate
+        .getDatabaseClient()
+        .sql(query.toString());
+
+    var queryExecute = baseQueryExecute;
+    for (Entry<String, Object> entry : params.entrySet()) {
+      queryExecute = queryExecute.bind(entry.getKey(), entry.getValue());
+    }
+
+    return
+        queryExecute
+            .map(row -> row.get(0, Long.class))
+            .first();
+
+  }
+
 }
