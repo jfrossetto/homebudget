@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.util.ObjectUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -92,6 +93,82 @@ public class AccountCustomRepositoryImpl implements AccountCustomRepository {
     }
 
     return new QueryHolder(query.toString(), params);
+
+  }
+
+  public Flux<Account> findAutocomplete(String code,
+                                        String search) {
+
+    Map<String, Object> params = new HashMap<>();
+
+    StringBuilder query = new StringBuilder()
+        .append("select ")
+        .append(" account_id as id, ")
+        .append(" code, ")
+        .append(" description, ")
+        .append(" parent_code as parentCode ")
+        .append("    from account ");
+
+    if (ObjectUtils.isEmpty(code)) {
+      query.append("where code like :searchCode or description like :searchDescription ");
+      params.put("searchCode", search + "%");
+      params.put("searchDescription", "%" + search + "%");
+    } else {
+      log.info(" findAutocomplete by code {}", code);
+      query.append("where code = :code ");
+      params.put("code", code);
+    }
+    query.append(" order by code limit 100");
+    log.info("findAll {}", query.toString());
+
+    final var baseQueryExecute = r2dbcTemplate
+        .getDatabaseClient()
+        .sql(query.toString());
+
+    var queryExecute = baseQueryExecute;
+    for (Entry<String, Object> entry : params.entrySet()) {
+      queryExecute = queryExecute.bind(entry.getKey(), entry.getValue());
+    }
+
+    return
+        queryExecute
+            .map(accountMapper::apply)
+            .all();
+
+  }
+
+  public Mono<Long> findLastCode(String parentCode) {
+
+    Map<String, Object> params = new HashMap<>();
+
+    String maxCode = ObjectUtils.isEmpty(parentCode)
+      ? "select coalesce(max(code::numeric), 0) as lastCode "
+      : "select coalesce(max(substring(code, length(:parentCode)+1)::numeric), 0) as lastCode ";
+
+    StringBuilder query = new StringBuilder()
+        .append(maxCode)
+        .append("  from account ");
+
+    if (!ObjectUtils.isEmpty(parentCode)) {
+      query.append("where parent_code = :parentCode ");
+      params.put("parentCode", parentCode);
+    } else {
+      query.append("where parent_code is null ");
+    }
+
+    final var baseQueryExecute = r2dbcTemplate
+        .getDatabaseClient()
+        .sql(query.toString());
+
+    var queryExecute = baseQueryExecute;
+    for (Entry<String, Object> entry : params.entrySet()) {
+      queryExecute = queryExecute.bind(entry.getKey(), entry.getValue());
+    }
+
+    return
+        queryExecute
+            .map(row -> row.get(0, Long.class))
+            .first();
 
   }
 
