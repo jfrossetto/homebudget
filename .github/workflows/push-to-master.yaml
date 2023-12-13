@@ -24,3 +24,5 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: clean build
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
