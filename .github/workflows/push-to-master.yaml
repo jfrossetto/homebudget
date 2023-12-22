@@ -38,6 +38,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: loc
+        with:
+          context: .
         run: |
           pwd
           ls -l
