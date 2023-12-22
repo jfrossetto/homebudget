@@ -4,7 +4,8 @@ RUN mkdir /apps
 
 WORKDIR /apps
 
-COPY homebudget-api/build/libs/homebudget-api-0.0.1.jar ./homebudget-api.jar
+ARG JAR_FILE=homebudget-api/build/libs/*.jar
+COPY ${JAR_FILE} ./homebudget-api.jar
 COPY homebudget-api/build/resources/main/applicationDefault.properties ./application.properties
 COPY homebudget-api/build/resources/main/log4j2.xml ./
 
