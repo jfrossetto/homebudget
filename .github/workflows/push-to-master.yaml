@@ -27,11 +27,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
-  release:
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
+  #release:
+  #  needs:
+  #    - build
+  #  runs-on: ubuntu-latest
+  #  steps:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -46,5 +46,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           tags: jfrossetto/homebudget-api:latest
